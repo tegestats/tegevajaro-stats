@@ -215,7 +215,8 @@ test('トピック：平日開催は祝日をのぞき、晴れは主な天気�
   const d = getData();
   const wk = d.topics.find(t => t.id === 'weekday');
   const n = matches.filter(m => '月火水木金'.includes(m.weekday) && !['2026-11-03', '2026-09-22', '2026-09-23', '2026-11-23'].includes(m.date)).length;
-  if (wk) assert.ok(wk.sub.includes(`${n}`) || wk.big.includes(`${n}`), wk.sub);
+  // 勝・分・敗の合計が、平日（祝日をのぞく）の試合数と同じ
+  if (wk) { const m = `${wk.big} ${wk.sub}`.match(/(\d+)勝(\d+)分(\d+)敗/); assert.ok(m, wk.sub); assert.equal(Number(m[1]) + Number(m[2]) + Number(m[3]), n, wk.sub); }
   const w = d.topics.find(t => t.id === 'weather');
   const sunny = matches.filter(m => /^晴/.test(m.weather) && !/雨/.test(m.weather)).length;
   if (w) { const m = w.sub.match(/晴れの日は(\d+)勝(\d+)分(\d+)敗/); assert.equal(Number(m[1]) + Number(m[2]) + Number(m[3]), sunny, w.sub); }
